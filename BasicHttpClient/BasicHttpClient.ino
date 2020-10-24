@@ -13,9 +13,11 @@
 
 
 #define USE_SERIAL Serial
-#define URI_GET "http://192.168.194.10:3000/"
-#define SSID "0000ando_Guest"
-#define PASSWORD "12345678"
+#define URI_GET "https://hook.integromat.com/8y2i2ajavei5fk2fhjym8u2clv0zrm50?name=Ryosuke&message=Hello&channel=iot-test"
+#define SSID "Garedge"
+#define PASSWORD "wXKvUA6v"
+
+#define LED_BUILTIN 2
 
 WiFiMulti wifiMulti;
 
@@ -63,6 +65,7 @@ void setup() {
     USE_SERIAL.flush();
     delay(1000);
   }
+  pinMode(LED_BUILTIN, OUTPUT);
 
   wifiMulti.addAP(SSID, PASSWORD);
 
@@ -130,14 +133,17 @@ void loop() {
 
   JSONVar response = JSON.parse(responseString);
 
-  if (response.hasOwnProperty("error")) return;
+  if (!response.hasOwnProperty("error")) return;
   if ((bool) response["error"])
     return ;
 
-  if (response.hasOwnProperty("value")) return;
+  if (!response.hasOwnProperty("value")) return;
   bool value = (bool) response["value"];
   USE_SERIAL.print("responsed value is ");
   USE_SERIAL.print(value);
   USE_SERIAL.println(".");
+
+  
+  digitalWrite(LED_BUILTIN, value);   // turn the LED on (HIGH is the voltage level)
 
 }
